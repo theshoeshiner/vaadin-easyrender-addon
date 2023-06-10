@@ -1,0 +1,13 @@
+/* show-on-hover columns are hidden until the row is hovered on 
+We cant target anything lower than the column because it uses a CSS slot, and ::slotted cant target children*/
+
+:host tr td.show-on-hover ::slotted(*) {
+	/* opacity:0; */
+	visibility:hidden;
+	transition: opacity 0.1s;
+}
+
+:host tr:hover td.show-on-hover ::slotted(*) {
+	visibility:visible;
+	/* opacity:1;  */
+}
