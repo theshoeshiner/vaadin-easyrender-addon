@@ -8,17 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 
-@Route("")
+@Route("demo")
 public class AddonView extends Div {
 	
 	String[] names = {"Rob","Ashley","Victoria","Nate","Rosie","Axl","Caleb","Lucas","Trey","Dana","Beth"};
-	//String[] images = {"Rob","Ashley","Victoria","Nate","Rosie","Axl","Caleb","Lucas","Trey","Dana","Beth"};
 	Random random = new Random(System.currentTimeMillis());
 
     public AddonView() {
@@ -40,28 +41,20 @@ public class AddonView extends Div {
         
         grid.addColumn(Person::getName);
         
-        grid.addColumn(new BooleanIconRenderer<>(VaadinIcon.CHECK, VaadinIcon.CLOSE, null, null, Person::getActive));
+        grid.addColumn(new BooleanIconRenderer<>(VaadinIcon.CHECK, VaadinIcon.CLOSE, null, null, Person::getActive))
+        .setWidth("100px").setFlexGrow(0);
         
-        grid.addColumn(new DurationRenderer<>(Person::getWaited, "H'h 'm'm'"));
+        grid.addColumn(new DurationRenderer<>(Person::getWaited, "H'h 'm'm'"))
+        .setWidth("150px").setFlexGrow(0);
         
-        grid.addColumn(new NumberRenderer<>(Person::getItemCount, new DecimalFormat("#"), "", true));
+        grid.addColumn(new NumberRenderer<>(Person::getItemCount, new DecimalFormat("#"), "", true))
+        .setWidth("100px").setFlexGrow(0)
+        ;
         
         grid.addColumn(new TemporalRenderer<>(Person::getTimestamp, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         
+        //FIXME these images arent showing when running jetty
         grid.addColumn(new ImageRenderer<>(Person::getPictureUrl, null, "75px", null));
-        
-        /* grid.addColumn(Person::getAge);
-        
-        grid.addComponentColumn(person -> {
-        	HorizontalLayout buttons = new HorizontalLayout();
-        	Button edit = new Button(VaadinIcon.PENCIL.create());
-        	edit.addClassName(HoverColumn.HOVER_COLUMN_EXCLUDE_CLASS);
-        	Button delete = new Button(VaadinIcon.TRASH.create());
-        	buttons.add(edit,delete);
-        	return buttons;
-        }).setClassNameGenerator(person -> {
-        	return HoverColumn.HOVER_COLUMN_CLASS;
-        });*/
         
         add(grid);
     	
