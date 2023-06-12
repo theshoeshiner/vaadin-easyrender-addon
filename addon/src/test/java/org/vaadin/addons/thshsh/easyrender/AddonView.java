@@ -16,17 +16,19 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 
-@Route("demo")
+@Route("")
 public class AddonView extends Div {
-	
-	String[] names = {"Rob","Ashley","Victoria","Nate","Rosie","Axl","Caleb","Lucas","Trey","Dana","Beth"};
+
+    private static final long serialVersionUID = -5828371605864015426L;
+    
+    String[] names = {"Rob","Ashley","Victoria","Nate","Rosie","Axl","Caleb","Lucas","Trey","Dana","Beth"};
 	Random random = new Random(System.currentTimeMillis());
 
     public AddonView() {
 
         List<Person> data = new ArrayList<>();
         for(int i=0;i<names.length;i++) {
-        	data.add(new Person(names[i],
+        	data.add(new Person(i,names[i],
         	       Duration.ofMinutes(random.nextInt(60)+5),
         	       random.nextBoolean(),
         	       random.nextInt(10),
@@ -39,7 +41,8 @@ public class AddonView extends Div {
         grid.setWidthFull();
         grid.setItems(new ListDataProvider<>(data));
         
-        grid.addColumn(Person::getName);
+
+        grid.addColumn(new RouterLinkRenderer<>(PersonView.class, Person::getName, Person::getId));
         
         grid.addColumn(new BooleanIconRenderer<>(VaadinIcon.CHECK, VaadinIcon.CLOSE, null, null, Person::getActive))
         .setWidth("100px").setFlexGrow(0);
@@ -62,6 +65,7 @@ public class AddonView extends Div {
     
     public static class Person {
         
+        Integer id;
     	String name;
     	Duration waited;
     	Boolean active;
@@ -71,8 +75,9 @@ public class AddonView extends Div {
     	
     	
 		
-		public Person(String name, Duration waited, Boolean active, Integer itemCount, OffsetDateTime timestamp, String pictureUrl) {
+		public Person(Integer id,String name, Duration waited, Boolean active, Integer itemCount, OffsetDateTime timestamp, String pictureUrl) {
             super();
+            this.id = id;
             this.name = name;
             this.waited = waited;
             this.active = active;
@@ -80,6 +85,15 @@ public class AddonView extends Div {
             this.timestamp = timestamp;
             this.pictureUrl = pictureUrl;
         }
+		
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
         public String getName() {
 			return name;
 		}

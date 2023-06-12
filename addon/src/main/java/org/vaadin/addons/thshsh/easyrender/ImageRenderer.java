@@ -9,7 +9,7 @@ import com.vaadin.flow.function.ValueProvider;
 
 /**
  * 
- * Renderer that returns an Image with url, alt text, width, and height, specified via {@link ValueProvider}s
+ * Renders an Image with url, alt text, width, and height, specified via {@link ValueProvider}s
  *
  * @param <Source>
  */
