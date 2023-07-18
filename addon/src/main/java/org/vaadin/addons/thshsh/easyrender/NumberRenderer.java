@@ -8,7 +8,7 @@ import com.vaadin.flow.function.ValueProvider;
 /**
  * Extension of {@link com.vaadin.flow.data.renderer.NumberRenderer} that allows specifying that zeros
  * should be treated as null to avoid rendering tables with lots of zeros.
- *
+ * @deprecated Use LitRenderer {@link org.vaadin.addons.thshsh.easyrender.EasyRender#number}
  * @param <SOURCE>
  */
 public class NumberRenderer<SOURCE> extends com.vaadin.flow.data.renderer.NumberRenderer<SOURCE>{

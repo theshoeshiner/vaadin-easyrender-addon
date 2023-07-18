@@ -9,7 +9,7 @@ import com.vaadin.flow.function.ValueProvider;
 /**
  * Renders a Duration object according to a format string. {@link org.apache.commons.lang3.time.DurationFormatUtils}
  * @author daniel.watson
- *
+ * @deprecated Use LitRenderer {@link org.vaadin.addons.thshsh.easyrender.EasyRender#duration}
  * @param <Source>
  */
 public class DurationRenderer<Source> extends NullableBasicRenderer<Source,Duration> { 

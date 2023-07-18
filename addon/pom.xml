@@ -6,7 +6,7 @@
 
     <groupId>org.vaadin.addons.thshsh</groupId>
     <artifactId>easyrender</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>EasyRender</name>
     <description>EasyRender Add-on for Vaadin</description>
 

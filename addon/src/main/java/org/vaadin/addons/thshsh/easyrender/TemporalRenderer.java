@@ -8,9 +8,10 @@ import com.vaadin.flow.function.ValueProvider;
 
 /**
  * Renderer that formats a {@link java.time.temporal.Temporal} using the provided {@link java.time.format.DateTimeFormatter}  
- *
+ * @deprecated Use LitRenderer {@link org.vaadin.addons.thshsh.easyrender.EasyRender#temporal}
  * @param <Source>
  */
+@Deprecated
 public class TemporalRenderer<Source,T extends Temporal> extends NullableBasicRenderer<Source,T> { 
 
     private static final long serialVersionUID = -4526832464940635351L;

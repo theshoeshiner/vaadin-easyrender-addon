@@ -8,7 +8,7 @@ import com.vaadin.flow.function.ValueProvider;
 
 /**
  * Renders a configurable Icon in place of a boolean value.
- *
+ * @deprecated Use LitRenderer {@link org.vaadin.addons.thshsh.easyrender.EasyRender#booleanIcon}
  * @param <Source>
  */
 public class BooleanIconRenderer<Source> extends ComponentRenderer<com.vaadin.flow.component.Component,Source> {

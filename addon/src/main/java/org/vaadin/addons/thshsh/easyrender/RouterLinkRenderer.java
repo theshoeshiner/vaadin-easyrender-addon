@@ -14,7 +14,7 @@ import com.vaadin.flow.router.internal.HasUrlParameterFormat;
 /**
  * Renders a router link who's properties are configured by value providers
  * @author daniel.watson
- *
+ * @deprecated Use LitRenderer {@link org.vaadin.addons.thshsh.easyrender.EasyRender#router}
  * @param <Source>
  */
 @SuppressWarnings("serial")
