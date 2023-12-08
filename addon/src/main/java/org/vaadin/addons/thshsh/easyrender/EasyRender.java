@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -25,51 +26,51 @@ public class EasyRender {
 	 * Temporals
 	 */
 	
-	public static <Source,Target extends Temporal> LitRenderer<Source> temporal(ValueProvider<Source, Target> valueProvider){
+	public static <Source,Target extends Temporal> ValueProvider<Source,String> temporal(ValueProvider<Source, Target> valueProvider){
 		return temporal(valueProvider, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 	}
 	
-	public static <Source,Target extends Temporal> LitRenderer<Source> temporal(ValueProvider<Source, Target> valueProvider,DateTimeFormatter formatter){
+	public static <Source,Target extends Temporal> ValueProvider<Source,String> temporal(ValueProvider<Source, Target> valueProvider,DateTimeFormatter formatter){
 		return temporal(valueProvider, ()->formatter);
 	}
-	
-	public static <Source,Target extends Temporal> LitRenderer<Source> temporal(ValueProvider<Source, Target> valueProvider,SerializableSupplier<DateTimeFormatter> formatter){
-		return LitRenderer.<Source>of("${item.value}").withProperty("value", source -> {
+
+	public static <Source,Target extends Temporal> ValueProvider<Source,String> temporal(ValueProvider<Source, Target> valueProvider,SerializableSupplier<DateTimeFormatter> formatter){
+		return (source) -> {
 			Target temporal = valueProvider.apply(source);
 			return temporal == null ? StringUtils.EMPTY
-	                : formatter.get().format(temporal);
-		});
+		            : formatter.get().format(temporal);
+		};
 	}
 	
 	/*
 	 * Durations
 	 */
 	
-	public static <Source> LitRenderer<Source> duration(ValueProvider<Source, Duration> valueProvider,String format){
-		return LitRenderer.<Source>of("${item.value}").withProperty("value", source -> {
+	public static <Source> ValueProvider<Source,String> duration(ValueProvider<Source, Duration> valueProvider,String format){
+		return (source) -> {
 			Duration duration = valueProvider.apply(source);
 			return duration == null ? StringUtils.EMPTY
 	                : DurationFormatUtils.formatDuration(duration.toMillis(),format);
-		});
+		};
 	}
 	
 	/*
 	 * Numbers
 	 */
 	
-	public static <Source,Target extends Number> LitRenderer<Source> number(ValueProvider<Source, Target> valueProvider,NumberFormat formatter,String nullRepresentation,Boolean zeroAsNull){
+	public static <Source,Target extends Number> ValueProvider<Source,String> number(ValueProvider<Source, Target> valueProvider,NumberFormat formatter,String nullRepresentation,Boolean zeroAsNull){
 		return number(valueProvider,()->formatter,nullRepresentation,zeroAsNull);
 	}
 	
-	public static <Source,Target extends Number> LitRenderer<Source> number(ValueProvider<Source, Target> valueProvider,SerializableSupplier<NumberFormat> formatter,String nullRepresentation,Boolean zeroAsNull){
-		return LitRenderer.<Source>of("${item.value}").withProperty("value", source -> {
+	public static <Source,Target extends Number> ValueProvider<Source,String> number(ValueProvider<Source, Target> valueProvider,SerializableSupplier<NumberFormat> formatter,String nullRepresentation,Boolean zeroAsNull){
+		return (source) -> {
 			Number value = valueProvider.apply(source);
 			if(value == null) return nullRepresentation;
 			else {
 				if(zeroAsNull && value.longValue() == 0l) return nullRepresentation;
 				else return formatter.get().format(value);
 			}
-		});
+		};
 	}
 	
 	/*
@@ -84,29 +85,70 @@ public class EasyRender {
           ){
 		return router(navigationTarget, idProvider, nameProvider, paramName, null);
 	}
-
+	
 	public static <Source,Target extends Number> LitRenderer<Source> router(
 			 Class<? extends Component> navigationTarget,
 			ValueProvider<Source, ?> idProvider,
 			ValueProvider<Source, ?> nameProvider,
 			String paramName,
 			String target
+          ){
+		return router(navigationTarget,idProvider,nameProvider,null,null,paramName,target);
+	}
+
+	public static <Source,Target extends Number> LitRenderer<Source> router(
+			 Class<? extends Component> navigationTarget,
+			ValueProvider<Source, ?> idProvider,
+			ValueProvider<Source, ?> nameProvider,
+			ValueProvider<Source, ?> iconNameProvider,
+			ValueProvider<Source, ?> cssClassProvider,
+			String paramName,
+			String target
            ){
 		
 		Router router = VaadinService.getCurrent().getRouter();
 		
-		return LitRenderer
-				.<Source>of("<a router-link href='${item.url}'>${item.value}</a>")
-				.withProperty("value", source -> {
+		boolean href = navigationTarget != null && idProvider != null && paramName != null;
+		boolean icon = iconNameProvider != null;
+		boolean value = nameProvider != null;
+		boolean cssClass = cssClassProvider != null;
+		
+		LitRenderer<Source> renderer = LitRenderer
+				.<Source>of("<a router-link"
+						+ (href ? " href='${item.url}'" : "")
+						+ (cssClass ? " class='${item.class}'" : "")
+						+">"
+						+ (value ? "${item.value}" : "")
+						+ (icon ? "<vaadin-icon icon='${item.icon}' />" : "")
+						+ "</a>"
+						);
+		if(value) 
+			renderer = renderer.withProperty("value", source -> {
 					return nameProvider.apply(source);
-				})
-				.withProperty("url", source -> {
+				});
+		
+		if(cssClass) 
+			renderer = renderer.withProperty("class", source -> {
+					return cssClassProvider.apply(source);
+				});
+		
+		if(icon) 
+			renderer = renderer.withProperty("icon", source -> {
+					String iconName = Objects.toString(iconNameProvider.apply(source), null);
+					return iconName;
+
+				});
+		
+		if(href) {
+			renderer = renderer.withProperty("url", source -> {
 					String url = RouteConfiguration
 							.forRegistry(router.getRegistry())
 		                    .getUrl(navigationTarget, RouteParameters.empty());
 					return url +"?"+paramName+"="+idProvider.apply(source).toString();
 
-				});
+			});
+		}
+		return renderer;
 	}
 	
 	
@@ -132,7 +174,7 @@ public class EasyRender {
 					return collection +":"+name;
 				}
 				else return "";
-		});
+			});
 	}
 	
 	
